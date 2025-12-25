@@ -1,161 +1,115 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Fotos do Casamento | Thamirys & Felipe</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+<title>Fotos do Casamento | Thamirys & Felipe</title>
 
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #6b7f5a;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Montserrat', sans-serif;
-    }
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #6b7f5a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
 
-    .container {
-      background: #ffffff;
-      width: 100%;
-      max-width: 420px;
-      padding: 30px 25px;
-      border-radius: 18px;
-      text-align: center;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.25);
-      position: relative;
-      overflow: hidden;
-    }
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
 
-    .container::before,
-    .container::after {
-      content: "❀";
-      position: absolute;
-      font-size: 80px;
-      color: rgba(107,127,90,0.25);
-    }
+h1 { margin-bottom: 5px; }
+p { font-size: 15px; }
 
-    .container::before { top: -20px; left: -10px; }
-    .container::after { bottom: -30px; right: -10px; }
+input { display: none; }
 
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      margin-bottom: 5px;
-    }
+label, button {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+}
 
-    h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      margin-top: 0;
-      margin-bottom: 20px;
-      font-weight: 500;
-    }
+label {
+  background: #6b7f5a;
+  color: white;
+  cursor: pointer;
+}
 
-    p {
-      font-size: 15px;
-      margin-bottom: 25px;
-    }
+button {
+  background: #2f3b2a;
+  color: white;
+}
 
-    input[type="file"] {
-      display: none;
-    }
-
-    label {
-      display: inline-block;
-      padding: 14px 20px;
-      background: #6b7f5a;
-      color: #fff;
-      border-radius: 12px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-bottom: 15px;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      background: #2f3b2a;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    #status {
-      margin-top: 15px;
-      font-size: 14px;
-      color: #4b5e43;
-    }
-  </style>
+#status {
+  margin-top: 15px;
+}
+</style>
 </head>
+
 <body>
 
-<div class="container">
+<div class="card">
   <h1>Thamirys & Felipe</h1>
-  <h2>Nosso Casamento</h2>
+  <p>Envie sua foto para nosso casamento 💚</p>
 
-  <p>
-    Registre esse momento especial 💚<br>
-    Tire uma foto e envie para nossa galeria.
-  </p>
+  <label for="photo">📸 Tirar / Escolher Foto</label>
+  <input type="file" id="photo" accept="image/*" capture="camera">
 
-  <label for="photoInput">📸 Tirar / Escolher Foto</label>
-  <input type="file" id="photoInput" accept="image/*" capture="camera">
-
-  <button onclick="sendPhoto()">Enviar Foto</button>
-
-  <p id="status"></p>
+  <button onclick="send()">Enviar Foto</button>
+  <div id="status"></div>
 </div>
 
 <script>
-  // 🔴 COLE AQUI A URL DO SEU APPS SCRIPT
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz3hJbCZu99kzGqmXYX4bHfkb_pafSOakygTH3A_J0ZaTmjl_TnZNGYuOaJRbgixBHW/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhK2ylns1rvMVIKoY-9gxq7hoOJhlrbAOtNvmKk1gbZYa141dPVksJZDFDZVFtmV1Eaw/exec";
 
-  function sendPhoto() {
-    const input = document.getElementById("photoInput");
-    const file = input.files[0];
-
-    if (!file) {
-      alert("Por favor, selecione ou tire uma foto 😊");
-      return;
-    }
-
-    document.getElementById("status").innerText = "Enviando foto...";
-
-    const reader = new FileReader();
-    reader.onload = async function () {
-      const base64 = reader.result;
-
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            image: base64,
-            name: file.name
-          }),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-
-        if (response.ok) {
-          document.getElementById("status").innerText = "Foto enviada com sucesso 💚";
-          input.value = "";
-        } else {
-          throw new Error();
-        }
-      } catch {
-        document.getElementById("status").innerText = "Erro ao enviar a foto 😢";
-      }
-    };
-
-    reader.readAsDataURL(file);
+function send() {
+  const file = document.getElementById("photo").files[0];
+  if (!file) {
+    alert("Selecione uma foto");
+    return;
   }
+
+  document.getElementById("status").innerText = "Enviando...";
+
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          image: reader.result,
+          name: file.name
+        })
+      });
+
+      const json = await res.json();
+
+      if (json.status === "success") {
+        document.getElementById("status").innerText = "Foto enviada com sucesso 💚";
+      } else {
+        throw json.message;
+      }
+
+    } catch (err) {
+      document.getElementById("status").innerText = "Erro ao enviar a foto ❌";
+    }
+  };
+
+  reader.readAsDataURL(file);
+}
 </script>
 
 </body>
