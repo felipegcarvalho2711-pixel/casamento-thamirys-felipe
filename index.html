@@ -5,19 +5,17 @@
   <title>Fotos do Casamento | Thamirys & Felipe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Fonte elegante -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
     body {
       margin: 0;
       min-height: 100vh;
-      background: #6b7f5a; /* verde oliva */
+      background: #6b7f5a;
       display: flex;
       justify-content: center;
       align-items: center;
       font-family: 'Montserrat', sans-serif;
-      color: #2f3b2a;
     }
 
     .container {
@@ -32,25 +30,16 @@
       overflow: hidden;
     }
 
-    /* Flores decorativas */
     .container::before,
     .container::after {
       content: "❀";
       position: absolute;
       font-size: 80px;
-      color: rgba(255,255,255,0.35);
-      font-family: serif;
+      color: rgba(107,127,90,0.25);
     }
 
-    .container::before {
-      top: -20px;
-      left: -10px;
-    }
-
-    .container::after {
-      bottom: -30px;
-      right: -10px;
-    }
+    .container::before { top: -20px; left: -10px; }
+    .container::after { bottom: -30px; right: -10px; }
 
     h1 {
       font-family: 'Playfair Display', serif;
@@ -84,15 +73,9 @@
       font-size: 16px;
       cursor: pointer;
       margin-bottom: 15px;
-      transition: background 0.3s;
-    }
-
-    label:hover {
-      background: #5b6e4c;
     }
 
     button {
-      display: block;
       width: 100%;
       padding: 14px;
       border: none;
@@ -101,11 +84,6 @@
       color: #fff;
       font-size: 16px;
       cursor: pointer;
-      transition: opacity 0.3s;
-    }
-
-    button:hover {
-      opacity: 0.9;
     }
 
     #status {
@@ -113,38 +91,29 @@
       font-size: 14px;
       color: #4b5e43;
     }
-
-    footer {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #7a7a7a;
-    }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>Thamirys & Felipe</h1>
-    <h2>Nosso Casamento</h2>
+<div class="container">
+  <h1>Thamirys & Felipe</h1>
+  <h2>Nosso Casamento</h2>
 
-    <p>
-      Registre esse momento especial 💚<br>
-      Tire uma foto e envie para nossa galeria.
-    </p>
+  <p>
+    Registre esse momento especial 💚<br>
+    Tire uma foto e envie para nossa galeria.
+  </p>
 
-    <label for="photoInput">📸 Tirar / Escolher Foto</label>
-    <input type="file" id="photoInput" accept="image/*" capture="camera">
+  <label for="photoInput">📸 Tirar / Escolher Foto</label>
+  <input type="file" id="photoInput" accept="image/*" capture="camera">
 
-    <button onclick="sendPhoto()">Enviar Foto</button>
+  <button onclick="sendPhoto()">Enviar Foto</button>
 
-    <p id="status"></p>
-
-    <footer>
-      Obrigado por celebrar conosco ✨
-    </footer>
-  </div>
+  <p id="status"></p>
+</div>
 
 <script>
+  // 🔴 COLE AQUI A URL DO SEU APPS SCRIPT
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzMP_HVLLIThPf1kufFX9nfIOWUFsp4C4rDMHPXPLG_VXkN3_bQLYGJHAAWV6LpD8xm/exec";
 
   function sendPhoto() {
@@ -152,25 +121,37 @@
     const file = input.files[0];
 
     if (!file) {
-      alert("Por favor, tire ou selecione uma foto 😊");
+      alert("Por favor, selecione ou tire uma foto 😊");
       return;
     }
 
     document.getElementById("status").innerText = "Enviando foto...";
 
     const reader = new FileReader();
-    reader.onload = function(e) {
-      const base64 = e.target.result;
+    reader.onload = async function () {
+      const base64 = reader.result;
 
-      google.script.run
-        .withSuccessHandler(function() {
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            image: base64,
+            name: file.name
+          }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        if (response.ok) {
           document.getElementById("status").innerText = "Foto enviada com sucesso 💚";
           input.value = "";
-        })
-        .withFailureHandler(function() {
-          document.getElementById("status").innerText = "Erro ao enviar a foto 😢";
-        })
-        .uploadPhoto(base64, file.name);
+        } else {
+          throw new Error();
+        }
+      } catch {
+        document.getElementById("status").innerText = "Erro ao enviar a foto 😢";
+      }
     };
 
     reader.readAsDataURL(file);
