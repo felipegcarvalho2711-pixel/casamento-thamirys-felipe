@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fotos do Casamento | Thamirys & Felipe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Fonte elegante -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #6b7f5a; /* verde oliva */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Montserrat', sans-serif;
+      color: #2f3b2a;
+    }
+
+    .container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      padding: 30px 25px;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Flores decorativas */
+    .container::before,
+    .container::after {
+      content: "❀";
+      position: absolute;
+      font-size: 80px;
+      color: rgba(255,255,255,0.35);
+      font-family: serif;
+    }
+
+    .container::before {
+      top: -20px;
+      left: -10px;
+    }
+
+    .container::after {
+      bottom: -30px;
+      right: -10px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    p {
+      font-size: 15px;
+      margin-bottom: 25px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    label {
+      display: inline-block;
+      padding: 14px 20px;
+      background: #6b7f5a;
+      color: #fff;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      transition: background 0.3s;
+    }
+
+    label:hover {
+      background: #5b6e4c;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: #2f3b2a;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #4b5e43;
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #7a7a7a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Thamirys & Felipe</h1>
+    <h2>Nosso Casamento</h2>
+
+    <p>
+      Registre esse momento especial 💚<br>
+      Tire uma foto e envie para nossa galeria.
+    </p>
+
+    <label for="photoInput">📸 Tirar / Escolher Foto</label>
+    <input type="file" id="photoInput" accept="image/*" capture="camera">
+
+    <button onclick="sendPhoto()">Enviar Foto</button>
+
+    <p id="status"></p>
+
+    <footer>
+      Obrigado por celebrar conosco ✨
+    </footer>
+  </div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzMP_HVLLIThPf1kufFX9nfIOWUFsp4C4rDMHPXPLG_VXkN3_bQLYGJHAAWV6LpD8xm/exec";
+
+  function sendPhoto() {
+    const input = document.getElementById("photoInput");
+    const file = input.files[0];
+
+    if (!file) {
+      alert("Por favor, tire ou selecione uma foto 😊");
+      return;
+    }
+
+    document.getElementById("status").innerText = "Enviando foto...";
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64 = e.target.result;
+
+      google.script.run
+        .withSuccessHandler(function() {
+          document.getElementById("status").innerText = "Foto enviada com sucesso 💚";
+          input.value = "";
+        })
+        .withFailureHandler(function() {
+          document.getElementById("status").innerText = "Erro ao enviar a foto 😢";
+        })
+        .uploadPhoto(base64, file.name);
+    };
+
+    reader.readAsDataURL(file);
+  }
+</script>
+
+</body>
+</html>
